@@ -12,103 +12,6 @@ from sklearn.neighbors import NearestNeighbors
 from numpy.linalg import norm
 from chatbot import Chatbot  # Assuming you have a chatbot module
 
-# Function to authenticate user credentials from the database
-def authenticate_user(username, password):
-    try:
-        # Connect to the MySQL database
-        connection = mysql.connector.connect(
-            host="sql6.freemysqlhosting.net",
-            database="sql6697353",
-            user="sql6697353",
-            password="wvfSQJbmMs"
-        )
-
-        # Create a cursor object to execute SQL queries
-        cursor = connection.cursor()
-
-        # Query to check if the username and password match
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
-        cursor.execute(query, (username, password))
-        user = cursor.fetchone()  # Fetch the first row
-
-        # If user exists, return True (authentication successful)
-        if user:
-            return True
-        else:
-            return False
-
-    except mysql.connector.Error as error:
-        st.error(f"Error: {error}")
-        return False
-
-    finally:
-        # Close the cursor and database connection
-        if 'connection' in locals() and connection.is_connected():
-            cursor.close()
-            connection.close()
-
-# Define your login function
-def login():
-    st.header("Login Page")
-    # Add your login code here
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    if st.button("Login"):
-        # Authenticate user with provided credentials
-        if authenticate_user(username, password):
-            st.session_state.logged_in = True
-            query_params = st.experimental_get_query_params()
-            query_params["page"] = ["Dashboard"]
-            st.experimental_set_query_params(**query_params)
-            # Redirect to dashboard
-            st.success("Login successful!")
-        else:
-            st.error("Invalid username or password")
-
-# Define your registration function
-def register():
-    st.header("Registration Page")
-    # Add your registration code here
-    username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
-    email = st.text_input("Email")
-
-    if st.button("Register"):
-        # Validate input
-        if not username or not password or not email:
-            st.error("Please enter username, password, and email.")
-        else:
-            try:
-                # Connect to the MySQL database
-                connection = mysql.connector.connect(
-                    host="sql6.freemysqlhosting.net",
-                    database="sql6697353",
-                    user="sql6697353",
-                    password="wvfSQJbmMs"
-                )
-
-                # Create a cursor object to execute SQL queries
-                cursor = connection.cursor()
-
-                # Check if username or email already exists
-                cursor.execute("SELECT * FROM users WHERE username = %s OR email = %s", (username, email))
-                result = cursor.fetchone()
-                if result:
-                    st.error("Username or email already exists. Please choose different ones.")
-                else:
-                    # Insert new user into database
-                    cursor.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (username, password, email))
-                    connection.commit()
-                    st.success("Registration successful. You can now log in.")
-            except mysql.connector.Error as error:
-                st.error(f"Error: {error}")
-            finally:
-                # Close the cursor and database connection
-                if 'connection' in locals() and connection.is_connected():
-                    cursor.close()
-                    connection.close()
-
-
 # Define function for feature extraction
 def feature_extraction(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
@@ -203,25 +106,8 @@ def main():
     # Give title to the app
     st.title("Fashion Recommender System")
 
-    # Sidebar navigation
-    page = st.sidebar.radio("Navigation", ["Login", "Register", "Dashboard"])
-
-    # Check if user is logged in
-    if "logged_in" not in st.session_state:
-        st.session_state.logged_in = False
-
-    # Show login page if user is not logged in
-    if not st.session_state.logged_in:
-        if page == "Login":
-            login()
-
-    # Show registration page if selected in the sidebar
-    if page == "Register":
-        register()
-
-    # Show dashboard if selected in the sidebar and user is logged in
-    if page == "Dashboard" and st.session_state.logged_in:
-        show_dashboard()
+    # Show dashboard
+    show_dashboard()
 
 # Run the main app
 if __name__ == "__main__":
