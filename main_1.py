@@ -10,7 +10,6 @@ from tensorflow.keras.layers import GlobalMaxPooling2D
 from tensorflow.keras.applications.resnet50 import ResNet50, preprocess_input
 from sklearn.neighbors import NearestNeighbors
 from numpy.linalg import norm
-from chatbot import Chatbot  # Assuming you have a chatbot module
 
 # Define function for feature extraction
 def feature_extraction(img_path, model):
@@ -41,7 +40,7 @@ def save_uploaded_file(uploaded_file):
 # Function to show dashboard content
 def show_dashboard():
     st.header("Fashion Recommender System")
-    chatbot = Chatbot()
+
     # Load ResNet model for image feature extraction
     model = ResNet50(weights='imagenet', include_top=False, input_shape=(224, 224, 3))
     model.trainable = False
@@ -82,24 +81,6 @@ def show_dashboard():
 
         else:
             st.header("Some error occurred in file upload")
-
-    # Chatbot section
-    user_question = st.text_input("Ask a question:")
-    if user_question:
-        bot_response, recommended_products = chatbot.generate_response(user_question)
-        st.write("Chatbot:", bot_response)
-
-        # Display recommended products
-        for result in recommended_products:
-            pid = result['corpus_id']
-            product_info = chatbot.product_data[pid]
-            st.write("Product Name:", product_info['productDisplayName'])
-            st.write("Category:", product_info['masterCategory'])
-            st.write("Article Type:", product_info['articleType'])
-            st.write("Usage:", product_info['usage'])
-            st.write("Season:", product_info['season'])
-            st.write("Gender:", product_info['gender'])
-            st.image(chatbot.images[pid])
 
 # Main Streamlit app
 def main():
