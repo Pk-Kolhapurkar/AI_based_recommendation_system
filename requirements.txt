@@ -1,8 +1,8 @@
 streamlit
-tensorflow
+# Replace tensorflow with a compatible version for your Python
+tensorflow==<version_number>  # Find compatible version on TensorFlow website
 tqdm
 numpy
-pickle
 transformers
 langchain-community
 datasets
