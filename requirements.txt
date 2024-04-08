@@ -9,3 +9,4 @@ datasets
 sentence-transformers
 torch
 matplotlib
+mysql-connector-python
