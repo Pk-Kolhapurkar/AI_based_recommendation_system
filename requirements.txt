@@ -10,3 +10,4 @@ sentence-transformers
 torch
 matplotlib
 mysql-connector-python
+h5py==3.10.0
