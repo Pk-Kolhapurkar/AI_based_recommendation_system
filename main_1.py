@@ -24,12 +24,12 @@ def authenticate_user(username, password):
         )
 
         # Create a cursor object to execute SQL queries
-        cursor = connection.cursor()
+        cursor = connection.cursor() #cursor allows you to execute SQL queries on the connected database.
 
         # Query to check if the username and password match
-        query = "SELECT * FROM users WHERE username = %s AND password = %s"
+        query = "SELECT * FROM users WHERE username = %s AND password = %s"  ##The %s placeholders are used for parameterized queries to prevent SQL injection.
         cursor.execute(query, (username, password))
-        user = cursor.fetchone()  # Fetch the first row
+        user = cursor.fetchone()  # Fetch the first row whrere the data matched
 
         # If user exists, return True (authentication successful)
         if user:
@@ -52,16 +52,16 @@ def login():
     st.header("Login Page")
     # Add your login code here
     username = st.text_input("Username")
-    password = st.text_input("Password", type="password")
+    password = st.text_input("Password", type="password") #type="password" argument to hide the entered characters.
     if st.button("Login"):
         # Authenticate user with provided credentials
-        if authenticate_user(username, password):
-            st.session_state.logged_in = True
-            query_params = st.experimental_get_query_params()
+        if authenticate_user(username, password): # if user exist run below code
+            st.session_state.logged_in = True     #Session state allows you to persist information across Streamlit sessions.
+            query_params = st.experimental_get_query_params()  #Query parameters are typically used to pass information between different pages or components in a web application.
             query_params["page"] = ["Dashboard"]
             st.experimental_set_query_params(**query_params)
             # Redirect to dashboard
-            st.success("Login successful!")
+            st.success("Login successful!") #displays a success message 
         else:
             st.error("Invalid username or password")
 
@@ -92,13 +92,13 @@ def register():
 
                 # Check if username or email already exists
                 cursor.execute("SELECT * FROM users WHERE username = %s OR email = %s", (username, email))
-                result = cursor.fetchone()
+                result = cursor.fetchone() fech fitch first row 
                 if result:
                     st.error("Username or email already exists. Please choose different ones.")
                 else:
                     # Insert new user into database
                     cursor.execute("INSERT INTO users (username, password, email) VALUES (%s, %s, %s)", (username, password, email))
-                    connection.commit()
+                    connection.commit() #Committing the transaction makes the changes permanent in the database.
                     st.success("Registration successful. You can now log in.")
             except mysql.connector.Error as error:
                 st.error(f"Error: {error}")
@@ -113,8 +113,8 @@ def register():
 def feature_extraction(img_path, model):
     img = image.load_img(img_path, target_size=(224, 224))
     img_array = image.img_to_array(img)
-    expanded_img_array = np.expand_dims(img_array, axis=0)
-    preprocessed_img = preprocess_input(expanded_img_array)
+    expanded_img_array = np.expand_dims(img_array, axis=0)  #This line adds an extra dimension to the image array. It's often necessary because deep learning models typically expect input data in batches. By adding an extra dimension at the beginning, we convert the image data into a batch with a single image.
+    preprocessed_img = preprocess_input(expanded_img_array)  #. The preprocess_input function prepares the image data in the format expected by the model.
     result = model.predict(preprocessed_img).flatten()
     normalized_result = result / norm(result)
     return normalized_result
@@ -129,8 +129,8 @@ def recommend(features, feature_list):
 # Function to save uploaded file
 def save_uploaded_file(uploaded_file):
     try:
-        with open(os.path.join('uploads', uploaded_file.name), 'wb') as f:
-            f.write(uploaded_file.getbuffer())
+        with open(os.path.join('uploads', uploaded_file.name), 'wb') as f: #The with statement ensures that the file is properly closed after writing, even if an error occurs during the write operation.
+            f.write(uploaded_file.getbuffer())  # writes the contents of the uploaded file (retrieved using uploaded_file.getbuffer()) to the opened file 'f'.
         return True
     except:
         return False
