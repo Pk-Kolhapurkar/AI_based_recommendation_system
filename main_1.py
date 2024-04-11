@@ -120,10 +120,10 @@ def feature_extraction(img_path, model):
     return normalized_result
 
 # Define function for recommendation
-def recommend(features, feature_list):
-    neighbors = NearestNeighbors(n_neighbors=6, algorithm='brute', metric='euclidean')
-    neighbors.fit(feature_list)
-    distances, indices = neighbors.kneighbors([features])
+def recommend(features, feature_list):  ##takes two parameters: features (the features extracted from the uploaded image) and feature_list (a list of features of all products in the database)
+    neighbors = NearestNeighbors(n_neighbors=6, algorithm='brute', metric='euclidean')  ##Brute-force search is simple to implement and conceptually easy to understand. It exhaustively searches through all data points to find the nearest neighbors. While this approach may be computationally expensive for large datasets, it ensures accuracy because it considers all points without any assumptions about the underlying data distribution.  NO hyperparameters tunning neeeded .
+    neighbors.fit(feature_list)  fit model on features of all images
+    distances, indices = neighbors.kneighbors([features]) ##This method returns the distances and indices of the nearest neighbors of features in feature_list.
     return indices
 
 # Function to save uploaded file
